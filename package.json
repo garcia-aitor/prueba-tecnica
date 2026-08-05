@@ -1,0 +1,12 @@
+{
+  "name": "inditex",
+  "version": "0.0.1",
+  "description": "Prueba tecnica frontend para inditex. SPA para explorar y reproducir los 100 podcasts musicales más populares de Apple Podcasts. Permite consultar el catálogo, acceder al detalle de cada podcast y reproducir sus episodios mediante un reproductor nativo HTML5. La navegación se realiza íntegramente en cliente y los datos se almacenan en caché durante 24 horas para reducir las peticiones a la API.",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
