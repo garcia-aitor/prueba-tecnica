@@ -1,1 +1,1 @@
-# Prueba técnica INDITEX
+# Prueba técnica
