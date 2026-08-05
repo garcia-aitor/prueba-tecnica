@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 type CoverImageProps = {
@@ -7,6 +7,7 @@ type CoverImageProps = {
   $rounded?: boolean;
 };
 
+// Evita el fade al remontar (podcast ↔ episodio) si la imagen ya se cargó
 const loadedSources = new Set<string>();
 
 const Frame = styled.div<{ $rounded: boolean }>`
@@ -28,20 +29,12 @@ const Image = styled.img<{ $loaded: boolean }>`
 export function CoverImage({ src, alt, $rounded = false }: CoverImageProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(() => loadedSources.has(src));
+  const [currentSrc, setCurrentSrc] = useState(src);
 
-  useLayoutEffect(() => {
-    const image = imageRef.current;
-
-    if (image?.complete && image.naturalWidth > 0) {
-      loadedSources.add(src);
-      setLoaded(true);
-      return;
-    }
-
-    if (!loadedSources.has(src)) {
-      setLoaded(false);
-    }
-  }, [src]);
+  if (src !== currentSrc) {
+    setCurrentSrc(src);
+    setLoaded(loadedSources.has(src));
+  }
 
   return (
     <Frame $rounded={$rounded}>

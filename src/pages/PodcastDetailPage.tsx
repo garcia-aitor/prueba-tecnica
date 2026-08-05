@@ -3,11 +3,7 @@ import type { LoaderFunctionArgs } from 'react-router-dom';
 import styled from 'styled-components';
 import { PodcastSidebar } from '../components/PodcastSidebar';
 import { formatEpisodeDate, formatEpisodeDuration } from '../hooks/formatEpisode';
-import {
-  podcastsApi,
-  useGetPodcastByIdQuery,
-  useGetPodcastFeedQuery,
-} from '../store/podcastsApi';
+import { podcastsApi, useGetPodcastByIdQuery, useGetPodcastFeedQuery } from '../store/podcastsApi';
 import { store } from '../store/store';
 
 const Layout = styled.section`
