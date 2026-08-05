@@ -1,9 +1,10 @@
 import { AppProviders } from './app/AppProviders';
+import { AppRouter } from './app/AppRouter';
 
 export function App() {
   return (
     <AppProviders>
-      <h1>Prueba técnica</h1>
+      <AppRouter />
     </AppProviders>
   );
 }

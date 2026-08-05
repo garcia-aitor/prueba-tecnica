@@ -1,7 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { podcastsApi } from './podcastsApi';
 
 export const store = configureStore({
-  reducer: (state = {}) => state,
+  reducer: {
+    [podcastsApi.reducerPath]: podcastsApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(podcastsApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
