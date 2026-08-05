@@ -1,5 +1,6 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import type { Podcast } from '../types/podcast';
+import { baseQueryWithCache } from './baseQueryWithCache';
 
 const TOP_PODCASTS_URL = 'https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json';
 
@@ -26,7 +27,7 @@ function mapEntry(entry: ItunesPodcast): Podcast {
 
 export const podcastsApi = createApi({
   reducerPath: 'podcastsApi',
-  baseQuery: fetchBaseQuery(),
+  baseQuery: baseQueryWithCache,
   endpoints: (build) => ({
     getTopPodcasts: build.query<Podcast[], void>({
       query: () => TOP_PODCASTS_URL,
