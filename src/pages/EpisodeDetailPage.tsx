@@ -97,6 +97,12 @@ export async function episodeDetailLoader({ params }: LoaderFunctionArgs) {
     } finally {
       descriptionRequest.unsubscribe();
     }
+  } catch (error) {
+    if (error instanceof Response) {
+      throw error;
+    }
+
+    console.error('Episodio no cargado', error);
 
     return null;
   } finally {

@@ -110,11 +110,13 @@ export async function podcastDetailLoader({ params }: LoaderFunctionArgs) {
     } finally {
       descriptionRequest.unsubscribe();
     }
-
-    return null;
+  } catch (error) {
+    console.error('Podcast no cargado', error);
   } finally {
     podcastRequest.unsubscribe();
   }
+
+  return null;
 }
 
 export function PodcastDetailPage() {

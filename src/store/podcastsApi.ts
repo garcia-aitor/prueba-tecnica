@@ -8,6 +8,16 @@ function podcastLookupUrl(podcastId: string) {
   return `https://itunes.apple.com/lookup?id=${podcastId}&media=podcast&entity=podcastEpisode&limit=20`;
 }
 
+// iTunes ya manda CORS; allorigins solo para el RSS (descripción), que a menudo no.
+// Solo en producción: en local el feed suele ir directo y nos evitamos 522 del proxy.
+export function proxiedFeedUrl(feedUrl: string): string {
+  if (process.env.NODE_ENV !== 'production') {
+    return feedUrl;
+  }
+
+  return `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`;
+}
+
 type Label = { label: string };
 
 type ItunesTopPodcast = {
@@ -169,7 +179,7 @@ export const podcastsApi = createApi({
     }),
     getPodcastFeed: build.query<PodcastFeed, string>({
       query: (feedUrl) => ({
-        url: feedUrl,
+        url: proxiedFeedUrl(feedUrl),
         responseHandler: 'text' as const,
       }),
       transformResponse: parsePodcastFeed,
