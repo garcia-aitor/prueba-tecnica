@@ -5,6 +5,10 @@ import { useGetTopPodcastsQuery } from '../store/podcastsApi';
 
 const Page = styled.section`
   padding: 1.5rem;
+
+  @media (max-width: 48rem) {
+    padding: 1rem;
+  }
 `;
 
 const Toolbar = styled.div`
@@ -13,6 +17,11 @@ const Toolbar = styled.div`
   justify-content: flex-end;
   gap: 0.75rem;
   margin-bottom: 2.5rem;
+
+  @media (max-width: 48rem) {
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
 `;
 
 const CountBadge = styled.span`
@@ -37,6 +46,12 @@ const FilterInput = styled.input`
     outline: 2px solid #1a8fb5;
     outline-offset: 1px;
   }
+
+  @media (max-width: 48rem) {
+    flex: 1;
+    width: auto;
+    min-width: 10rem;
+  }
 `;
 
 const Grid = styled.div`
@@ -44,6 +59,11 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
   gap: 2.75rem 1.75rem;
   align-items: start;
+
+  @media (max-width: 48rem) {
+    grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+    gap: 2.25rem 1rem;
+  }
 `;
 
 export function HomePage() {

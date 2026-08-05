@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { CoverImage } from './CoverImage';
 import type { Podcast } from '../types/podcast';
 
 type PodcastCardProps = {
@@ -26,26 +26,18 @@ const Card = styled.article`
   box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.12);
 `;
 
-const CoverFrame = styled.div`
+const CoverWrap = styled.div`
   position: absolute;
   top: 0;
   left: 50%;
   width: var(--cover-size);
   height: var(--cover-size);
-  overflow: hidden;
-  background: #e6e6e6;
-  border-radius: 50%;
-  box-shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.15);
   transform: translate(-50%, -50%);
-`;
 
-const Cover = styled.img<{ $loaded: boolean }>`
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: ${({ $loaded }) => ($loaded ? 1 : 0)};
-  transition: opacity 0.2s ease;
+  & > div {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const Title = styled.h3`
@@ -63,37 +55,13 @@ const Author = styled.p`
   line-height: 1.35;
 `;
 
-function PodcastCover({ src, alt }: { src: string; alt: string }) {
-  const imageRef = useRef<HTMLImageElement>(null);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setLoaded(false);
-
-    if (imageRef.current?.complete && imageRef.current.naturalWidth > 0) {
-      setLoaded(true);
-    }
-  }, [src]);
-
-  return (
-    <CoverFrame>
-      <Cover
-        ref={imageRef}
-        src={src}
-        alt={alt}
-        $loaded={loaded}
-        decoding="async"
-        onLoad={() => setLoaded(true)}
-      />
-    </CoverFrame>
-  );
-}
-
 export function PodcastCard({ podcast }: PodcastCardProps) {
   return (
     <CardLink to={`/podcast/${podcast.id}`}>
       <Card>
-        <PodcastCover src={podcast.image} alt={podcast.title} />
+        <CoverWrap>
+          <CoverImage src={podcast.image} alt={podcast.title} $rounded />
+        </CoverWrap>
         <Title>{podcast.title}</Title>
         <Author>Author: {podcast.author}</Author>
       </Card>

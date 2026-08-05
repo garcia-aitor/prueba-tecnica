@@ -1,6 +1,7 @@
 import { Outlet, createBrowserRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { Header } from '../components/Header';
+import { EpisodeDetailPage } from '../pages/EpisodeDetailPage';
 import { HomePage } from '../pages/HomePage';
 import { PodcastDetailPage, podcastDetailLoader } from '../pages/PodcastDetailPage';
 
@@ -33,6 +34,10 @@ export const router = createBrowserRouter([
         path: 'podcast/:podcastId',
         element: <PodcastDetailPage />,
         loader: podcastDetailLoader,
+      },
+      {
+        path: 'podcast/:podcastId/episode/:episodeId',
+        element: <EpisodeDetailPage />,
       },
     ],
   },
