@@ -1,12 +1,72 @@
 import { useParams } from 'react-router-dom';
 import type { LoaderFunctionArgs } from 'react-router-dom';
+import styled from 'styled-components';
 import { PodcastSidebar } from '../components/PodcastSidebar';
 import {
   podcastsApi,
   useGetPodcastByIdQuery,
-  useGetPodcastDescriptionQuery,
+  useGetPodcastFeedQuery,
 } from '../store/podcastsApi';
 import { store } from '../store/store';
+
+const Layout = styled.section`
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.5rem;
+
+  @media (max-width: 48rem) {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+`;
+
+const Content = styled.div`
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+`;
+
+const EpisodePanel = styled.article`
+  padding: 1.25rem 1.5rem 1.5rem;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.08);
+`;
+
+const EpisodeTitle = styled.h2`
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #222;
+`;
+
+const EpisodeDescription = styled.div`
+  margin-bottom: 1.5rem;
+  color: #444;
+  font-size: 0.95rem;
+  line-height: 1.55;
+
+  p {
+    margin: 0 0 0.85rem;
+  }
+
+  a {
+    color: #1a8fb5;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const Player = styled.audio`
+  display: block;
+  width: 100%;
+`;
 
 export async function episodeDetailLoader({ params }: LoaderFunctionArgs) {
   const podcastId = params.podcastId;
@@ -31,7 +91,7 @@ export async function episodeDetailLoader({ params }: LoaderFunctionArgs) {
     }
 
     const descriptionRequest = store.dispatch(
-      podcastsApi.endpoints.getPodcastDescription.initiate(detail.feedUrl),
+      podcastsApi.endpoints.getPodcastFeed.initiate(detail.feedUrl),
     );
 
     try {
@@ -54,21 +114,20 @@ export function EpisodeDetailPage() {
     skip: !podcastId,
   });
   const {
-    data: description,
-    isLoading: isDescriptionLoading,
-    isError: isDescriptionError,
-  } = useGetPodcastDescriptionQuery(data?.feedUrl ?? '', {
+    data: feed,
+    isLoading: isFeedLoading,
+    isError: isFeedError,
+  } = useGetPodcastFeedQuery(data?.feedUrl ?? '', {
     skip: !data?.feedUrl,
   });
 
-  const isWaitingForDescription =
-    Boolean(data?.feedUrl) && isDescriptionLoading && !isDescriptionError;
+  const isWaitingForFeed = Boolean(data?.feedUrl) && isFeedLoading && !isFeedError;
 
   if (!podcastId || !episodeId) {
     return <p>Episodio no encontrado</p>;
   }
 
-  if (isLoading || isWaitingForDescription) {
+  if (isLoading || isWaitingForFeed) {
     return null;
   }
 
@@ -87,25 +146,31 @@ export function EpisodeDetailPage() {
     return <p>Episodio no encontrado</p>;
   }
 
+  const episodeDescription =
+    feed?.episodeDescriptions[episode.title] || episode.description;
+
   return (
-    <section>
+    <Layout>
       <PodcastSidebar
         podcastId={data.id}
         title={data.title}
         author={data.author}
         image={data.image}
-        description={description || ''}
+        description={feed?.description || ''}
       />
-      <div>
-        <h2>{episode.title}</h2>
-        <div dangerouslySetInnerHTML={{ __html: episode.description }} />
-        {episode.episodeUrl ? (
-          <audio controls src={episode.episodeUrl}>
-            Tu navegador no soporta el elemento de audio.
-          </audio>
-        ) : (
-          <p>Audio no disponible</p>
-        )}      </div>
-    </section>
+      <Content>
+        <EpisodePanel>
+          <EpisodeTitle>{episode.title}</EpisodeTitle>
+          <EpisodeDescription dangerouslySetInnerHTML={{ __html: episodeDescription }} />
+          {episode.episodeUrl ? (
+            <Player controls src={episode.episodeUrl}>
+              Tu navegador no soporta el elemento de audio.
+            </Player>
+          ) : (
+            <p>Audio no disponible</p>
+          )}
+        </EpisodePanel>
+      </Content>
+    </Layout>
   );
 }

@@ -23,3 +23,8 @@ export type PodcastDetail = {
   description: string;
   episodes: Episode[];
 };
+
+export type PodcastFeed = {
+  description: string;
+  episodeDescriptions: Record<string, string>;
+};

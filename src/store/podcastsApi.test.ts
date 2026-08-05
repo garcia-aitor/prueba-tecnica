@@ -1,4 +1,4 @@
-import { mapPodcastLookup, mapTopPodcasts, parsePodcastFeedDescription } from './podcastsApi';
+import { mapPodcastLookup, mapTopPodcasts, parsePodcastFeed } from './podcastsApi';
 
 describe('mapTopPodcasts', () => {
   it('maps the top podcasts feed into podcasts', () => {
@@ -76,31 +76,47 @@ describe('mapPodcastLookup', () => {
   });
 });
 
-describe('parsePodcastFeedDescription', () => {
-  it('reads itunes:summary from the channel when present', () => {
+describe('parsePodcastFeed', () => {
+  it('reads channel description and episode HTML by title', () => {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-      <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+      <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+           xmlns:content="http://purl.org/rss/1.0/modules/content/"
+           version="2.0">
         <channel>
-          <title>Switched on Pop</title>
-          <description>Fallback description</description>
-          <itunes:summary>A podcast about the making and meaning of pop music.</itunes:summary>
+          <title>Song Exploder</title>
+          <itunes:summary>A podcast where musicians take apart their songs.</itunes:summary>
+          <item>
+            <title>Wilco - Magnetized</title>
+            <content:encoded><![CDATA[<p>Sponsored by <a href="https://example.com">Vinyl Me Please</a>.</p>]]></content:encoded>
+          </item>
         </channel>
       </rss>`;
 
-    expect(parsePodcastFeedDescription(xml)).toBe(
-      'A podcast about the making and meaning of pop music.',
-    );
+    expect(parsePodcastFeed(xml)).toEqual({
+      description: 'A podcast where musicians take apart their songs.',
+      episodeDescriptions: {
+        'Wilco - Magnetized':
+          '<p>Sponsored by <a href="https://example.com">Vinyl Me Please</a>.</p>',
+      },
+    });
   });
 
-  it('falls back to channel description and strips HTML', () => {
+  it('falls back to item description when content:encoded is missing', () => {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
       <rss version="2.0">
         <channel>
           <title>Test</title>
-          <description><![CDATA[<p>Hello <strong>world</strong></p>]]></description>
+          <description><![CDATA[<p>Channel</p>]]></description>
+          <item>
+            <title>Episode One</title>
+            <description><![CDATA[<p>Hello <strong>world</strong></p>]]></description>
+          </item>
         </channel>
       </rss>`;
 
-    expect(parsePodcastFeedDescription(xml)).toBe('Hello world');
+    const feed = parsePodcastFeed(xml);
+
+    expect(feed.description).toBe('Channel');
+    expect(feed.episodeDescriptions['Episode One']).toBe('<p>Hello <strong>world</strong></p>');
   });
 });

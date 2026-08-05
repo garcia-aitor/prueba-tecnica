@@ -6,7 +6,7 @@ import { formatEpisodeDate, formatEpisodeDuration } from '../hooks/formatEpisode
 import {
   podcastsApi,
   useGetPodcastByIdQuery,
-  useGetPodcastDescriptionQuery,
+  useGetPodcastFeedQuery,
 } from '../store/podcastsApi';
 import { store } from '../store/store';
 
@@ -104,7 +104,7 @@ export async function podcastDetailLoader({ params }: LoaderFunctionArgs) {
     }
 
     const descriptionRequest = store.dispatch(
-      podcastsApi.endpoints.getPodcastDescription.initiate(detail.feedUrl),
+      podcastsApi.endpoints.getPodcastFeed.initiate(detail.feedUrl),
     );
 
     try {
@@ -127,21 +127,20 @@ export function PodcastDetailPage() {
     skip: !podcastId,
   });
   const {
-    data: description,
-    isLoading: isDescriptionLoading,
-    isError: isDescriptionError,
-  } = useGetPodcastDescriptionQuery(data?.feedUrl ?? '', {
+    data: feed,
+    isLoading: isFeedLoading,
+    isError: isFeedError,
+  } = useGetPodcastFeedQuery(data?.feedUrl ?? '', {
     skip: !data?.feedUrl,
   });
 
-  const isWaitingForDescription =
-    Boolean(data?.feedUrl) && isDescriptionLoading && !isDescriptionError;
+  const isWaitingForFeed = Boolean(data?.feedUrl) && isFeedLoading && !isFeedError;
 
   if (!podcastId) {
     return <p>Podcast no encontrado</p>;
   }
 
-  if (isLoading || isWaitingForDescription) {
+  if (isLoading || isWaitingForFeed) {
     return null;
   }
 
@@ -161,7 +160,7 @@ export function PodcastDetailPage() {
         title={data.title}
         author={data.author}
         image={data.image}
-        description={description || ''}
+        description={feed?.description || ''}
       />
       <Content>
         <EpisodesPanel>

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import type { Episode, Podcast, PodcastDetail } from '../types/podcast';
+import type { Episode, Podcast, PodcastDetail, PodcastFeed } from '../types/podcast';
 import { baseQueryWithCache } from './baseQueryWithCache';
 
 const TOP_PODCASTS_URL = 'https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json';
@@ -103,13 +103,31 @@ export function mapPodcastLookup(response: ItunesLookupResponse): PodcastDetail 
   };
 }
 
-// Sacamos la descripción del canal RSS
-export function parsePodcastFeedDescription(xml: string): string {
+function getDirectChild(parent: Element, localName: string) {
+  return Array.from(parent.children).find((child) => child.localName === localName);
+}
+
+function stripHtml(value: string) {
+  return new DOMParser().parseFromString(value, 'text/html').body.textContent?.trim() ?? '';
+}
+
+function getItemHtml(item: Element) {
+  const encoded = getDirectChild(item, 'encoded');
+
+  if (encoded?.textContent?.trim()) {
+    return encoded.textContent.trim();
+  }
+
+  return getDirectChild(item, 'description')?.textContent?.trim() ?? '';
+}
+
+// Del RSS: descripción del canal (texto) + HTML de cada episodio
+export function parsePodcastFeed(xml: string): PodcastFeed {
   const document = new DOMParser().parseFromString(xml.trim(), 'text/xml');
   const channel = document.querySelector('channel');
 
   if (!channel) {
-    return '';
+    return { description: '', episodeDescriptions: {} };
   }
 
   const itunesSummary = channel.getElementsByTagNameNS(
@@ -117,11 +135,24 @@ export function parsePodcastFeedDescription(xml: string): string {
     'summary',
   )[0]?.textContent;
 
-  const rawDescription = itunesSummary ?? channel.querySelector('description')?.textContent ?? '';
+  const rawDescription = itunesSummary ?? getDirectChild(channel, 'description')?.textContent ?? '';
+  const episodeDescriptions: Record<string, string> = {};
 
-  return (
-    new DOMParser().parseFromString(rawDescription, 'text/html').body.textContent?.trim() ?? ''
-  );
+  Array.from(channel.children)
+    .filter((child) => child.localName === 'item')
+    .forEach((item) => {
+      const title = getDirectChild(item, 'title')?.textContent?.trim() ?? '';
+      const html = getItemHtml(item);
+
+      if (title && html) {
+        episodeDescriptions[title] = html;
+      }
+    });
+
+  return {
+    description: stripHtml(rawDescription),
+    episodeDescriptions,
+  };
 }
 
 export const podcastsApi = createApi({
@@ -136,15 +167,15 @@ export const podcastsApi = createApi({
       query: podcastLookupUrl,
       transformResponse: mapPodcastLookup,
     }),
-    getPodcastDescription: build.query<string, string>({
+    getPodcastFeed: build.query<PodcastFeed, string>({
       query: (feedUrl) => ({
         url: feedUrl,
         responseHandler: 'text' as const,
       }),
-      transformResponse: parsePodcastFeedDescription,
+      transformResponse: parsePodcastFeed,
     }),
   }),
 });
 
-export const { useGetTopPodcastsQuery, useGetPodcastByIdQuery, useGetPodcastDescriptionQuery } =
+export const { useGetTopPodcastsQuery, useGetPodcastByIdQuery, useGetPodcastFeedQuery } =
   podcastsApi;

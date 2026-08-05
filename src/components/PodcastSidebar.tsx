@@ -31,12 +31,17 @@ const CoverLink = styled(Link)`
   display: block;
   width: 100%;
   aspect-ratio: 1;
-  margin-bottom: 1rem;
 
   & > div {
     width: 100%;
     height: 100%;
   }
+`;
+
+const Meta = styled.div`
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid #e6e6e6;
 `;
 
 const Title = styled.h2`
@@ -51,7 +56,7 @@ const Title = styled.h2`
 `;
 
 const Author = styled.p`
-  margin: 0 0 1rem;
+  margin: 0;
   color: #555;
   font-size: 0.9rem;
   font-style: italic;
@@ -62,6 +67,12 @@ const Author = styled.p`
   }
 `;
 
+const DescriptionBlock = styled.div`
+  padding-top: 1rem;
+  margin-top: 1rem;
+  border-top: 1px solid #e6e6e6;
+`;
+
 const DescriptionLabel = styled.h3`
   margin: 0 0 0.5rem;
   font-size: 0.95rem;
@@ -70,7 +81,7 @@ const DescriptionLabel = styled.h3`
 
 const Description = styled.p`
   margin: 0;
-  color: #444;
+  color: #666;
   font-size: 0.9rem;
   font-style: italic;
   line-height: 1.45;
@@ -91,17 +102,19 @@ export function PodcastSidebar({
         <CoverLink to={podcastPath}>
           <CoverImage src={image} alt={title} />
         </CoverLink>
-        <Title>
-          <Link to={podcastPath}>{title}</Link>
-        </Title>
-        <Author>
-          by <Link to={podcastPath}>{author}</Link>
-        </Author>
+        <Meta>
+          <Title>
+            <Link to={podcastPath}>{title}</Link>
+          </Title>
+          <Author>
+            by <Link to={podcastPath}>{author}</Link>
+          </Author>
+        </Meta>
         {description ? (
-          <>
+          <DescriptionBlock>
             <DescriptionLabel>Description:</DescriptionLabel>
             <Description>{description}</Description>
-          </>
+          </DescriptionBlock>
         ) : null}
       </Card>
     </Aside>
