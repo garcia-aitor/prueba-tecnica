@@ -18,6 +18,6 @@ jest.mock('./store/podcastsApi', () => {
 describe('App', () => {
   it('renders the title', () => {
     render(<App />);
-    expect(screen.getByRole('heading', { name: /prueba técnica/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /podcaster/i })).toBeInTheDocument();
   });
 });

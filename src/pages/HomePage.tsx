@@ -1,5 +1,6 @@
-import { useGetTopPodcastsQuery } from '../store/podcastsApi';
+import { Link } from 'react-router-dom';
 import { usePodcastSearch } from '../hooks/usePodcastSearch';
+import { useGetTopPodcastsQuery } from '../store/podcastsApi';
 
 export function HomePage() {
   const { data, isLoading, isError, error } = useGetTopPodcastsQuery();
@@ -30,7 +31,9 @@ export function HomePage() {
       <ul>
         {filteredPodcasts.map((podcast) => (
           <li key={podcast.id}>
-            {podcast.title} — {podcast.author}
+            <Link to={`/podcast/${podcast.id}`}>
+              {podcast.title} — {podcast.author}
+            </Link>
           </li>
         ))}
       </ul>
