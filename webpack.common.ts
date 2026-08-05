@@ -23,12 +23,13 @@ const config: Configuration = {
         use: {
           loader: 'ts-loader',
           options: {
+            onlyCompileBundledFiles: true,
             compilerOptions: {
               noEmit: false,
             },
           },
         },
-        exclude: /node_modules/,
+        exclude: /node_modules|\.test\.[jt]sx?$/,
       },
       {
         test: /\.css$/i,
