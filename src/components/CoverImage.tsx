@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 type CoverImageProps = {
@@ -6,6 +6,8 @@ type CoverImageProps = {
   alt: string;
   $rounded?: boolean;
 };
+
+const loadedSources = new Set<string>();
 
 const Frame = styled.div<{ $rounded: boolean }>`
   overflow: hidden;
@@ -25,13 +27,19 @@ const Image = styled.img<{ $loaded: boolean }>`
 
 export function CoverImage({ src, alt, $rounded = false }: CoverImageProps) {
   const imageRef = useRef<HTMLImageElement>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(() => loadedSources.has(src));
 
-  useEffect(() => {
-    setLoaded(false);
+  useLayoutEffect(() => {
+    const image = imageRef.current;
 
-    if (imageRef.current?.complete && imageRef.current.naturalWidth > 0) {
+    if (image?.complete && image.naturalWidth > 0) {
+      loadedSources.add(src);
       setLoaded(true);
+      return;
+    }
+
+    if (!loadedSources.has(src)) {
+      setLoaded(false);
     }
   }, [src]);
 
@@ -43,7 +51,10 @@ export function CoverImage({ src, alt, $rounded = false }: CoverImageProps) {
         alt={alt}
         $loaded={loaded}
         decoding="async"
-        onLoad={() => setLoaded(true)}
+        onLoad={() => {
+          loadedSources.add(src);
+          setLoaded(true);
+        }}
       />
     </Frame>
   );

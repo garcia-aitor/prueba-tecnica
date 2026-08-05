@@ -1,4 +1,4 @@
-import { Outlet, createBrowserRouter } from 'react-router-dom';
+import { Outlet, ScrollRestoration, createBrowserRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { Header } from '../components/Header';
 import { EpisodeDetailPage, episodeDetailLoader } from '../pages/EpisodeDetailPage';
@@ -17,6 +17,7 @@ function RootLayout() {
       <Main>
         <Outlet />
       </Main>
+      <ScrollRestoration />
     </>
   );
 }
