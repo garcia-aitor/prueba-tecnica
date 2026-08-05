@@ -1,15 +1,21 @@
 import { Outlet, createBrowserRouter } from 'react-router-dom';
+import styled from 'styled-components';
 import { Header } from '../components/Header';
 import { HomePage } from '../pages/HomePage';
 import { PodcastDetailPage } from '../pages/PodcastDetailPage';
+
+const Main = styled.main`
+  min-height: calc(100vh - 4rem);
+  background: #f7f7f7;
+`;
 
 function RootLayout() {
   return (
     <>
       <Header />
-      <main>
+      <Main>
         <Outlet />
-      </main>
+      </Main>
     </>
   );
 }

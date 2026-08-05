@@ -8,15 +8,17 @@ const HeaderBar = styled.header`
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e5e5e5;
+  background: #fff;
+  border-bottom: 1px solid #e6e6e6;
 `;
 
 const Title = styled.h1`
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
+  font-weight: 700;
 
   a {
-    color: inherit;
+    color: #1a8fb5;
     text-decoration: none;
   }
 `;

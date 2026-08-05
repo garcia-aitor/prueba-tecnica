@@ -12,8 +12,8 @@ export const Spinner = styled.div.attrs({
 })`
   width: 1.25rem;
   height: 1.25rem;
-  border: 2px solid #d0d0d0;
-  border-top-color: #333;
+  border: 2px solid #cfe8f0;
+  border-top-color: #1a8fb5;
   border-radius: 50%;
   animation: ${spin} 0.6s linear infinite;
 `;
