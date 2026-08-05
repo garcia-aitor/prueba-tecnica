@@ -1,26 +1,4 @@
-import { mapPodcastLookup, mapTopPodcasts, parsePodcastFeed, proxiedFeedUrl } from './podcastsApi';
-
-describe('proxiedFeedUrl', () => {
-  const originalEnv = process.env.NODE_ENV;
-
-  afterEach(() => {
-    Object.defineProperty(process.env, 'NODE_ENV', { value: originalEnv, configurable: true });
-  });
-
-  it('returns the feed url unchanged outside production', () => {
-    Object.defineProperty(process.env, 'NODE_ENV', { value: 'development', configurable: true });
-
-    expect(proxiedFeedUrl('https://example.com/feed.xml')).toBe('https://example.com/feed.xml');
-  });
-
-  it('wraps the feed url with allorigins in production', () => {
-    Object.defineProperty(process.env, 'NODE_ENV', { value: 'production', configurable: true });
-
-    expect(proxiedFeedUrl('https://example.com/feed.xml')).toBe(
-      `https://api.allorigins.win/raw?url=${encodeURIComponent('https://example.com/feed.xml')}`,
-    );
-  });
-});
+import { mapPodcastLookup, mapTopPodcasts, parsePodcastFeed } from './podcastsApi';
 
 describe('mapTopPodcasts', () => {
   it('maps the top podcasts feed into podcasts', () => {
