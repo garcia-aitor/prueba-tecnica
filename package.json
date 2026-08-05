@@ -1,5 +1,5 @@
 {
-  "name": "inditex",
+  "name": "prueba-tecnica",
   "version": "0.0.1",
   "description": "Prueba tecnica frontend. SPA para explorar y reproducir los 100 podcasts musicales más populares de Apple Podcasts. Permite consultar el catálogo, acceder al detalle de cada podcast y reproducir sus episodios mediante un reproductor nativo HTML5. La navegación se realiza íntegramente en cliente y los datos se almacenan en caché durante 24 horas para reducir las peticiones a la API.",
   "license": "ISC",
@@ -8,5 +8,43 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.12.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-redux": "^9.3.0",
+    "react-router-dom": "^7.11.0",
+    "styled-components": "^6.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.62.1",
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.3",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@types/styled-components": "^5.1.36",
+    "css-loader": "^7.1.4",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "html-webpack-plugin": "^5.6.8",
+    "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.4.1",
+    "prettier": "^3.9.6",
+    "style-loader": "^4.0.0",
+    "ts-jest": "^29.4.12",
+    "ts-loader": "^9.6.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.66.0",
+    "webpack": "^5.109.2",
+    "webpack-cli": "^7.2.2",
+    "webpack-dev-server": "^6.0.0",
+    "webpack-merge": "^6.0.1"
   }
 }
