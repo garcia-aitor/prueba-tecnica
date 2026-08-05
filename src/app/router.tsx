@@ -2,7 +2,7 @@ import { Outlet, createBrowserRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { Header } from '../components/Header';
 import { HomePage } from '../pages/HomePage';
-import { PodcastDetailPage } from '../pages/PodcastDetailPage';
+import { PodcastDetailPage, podcastDetailLoader } from '../pages/PodcastDetailPage';
 
 const Main = styled.main`
   min-height: calc(100vh - 4rem);
@@ -32,6 +32,7 @@ export const router = createBrowserRouter([
       {
         path: 'podcast/:podcastId',
         element: <PodcastDetailPage />,
+        loader: podcastDetailLoader,
       },
     ],
   },

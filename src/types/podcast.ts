@@ -19,6 +19,7 @@ export type PodcastDetail = {
   title: string;
   author: string;
   image: string;
+  feedUrl: string;
   description: string;
   episodes: Episode[];
 };

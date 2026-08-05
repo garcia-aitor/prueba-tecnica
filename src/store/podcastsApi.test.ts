@@ -1,4 +1,4 @@
-import { mapPodcastLookup, mapTopPodcasts } from './podcastsApi';
+import { mapPodcastLookup, mapTopPodcasts, parsePodcastFeedDescription } from './podcastsApi';
 
 describe('mapTopPodcasts', () => {
   it('maps the top podcasts feed into podcasts', () => {
@@ -40,6 +40,7 @@ describe('mapPodcastLookup', () => {
           collectionName: 'The Joe Budden Podcast',
           artistName: 'The Joe Budden Network',
           artworkUrl600: 'https://example.com/cover.jpg',
+          feedUrl: 'https://example.com/feed.xml',
         },
         {
           wrapperType: 'podcastEpisode',
@@ -59,6 +60,7 @@ describe('mapPodcastLookup', () => {
       title: 'The Joe Budden Podcast',
       author: 'The Joe Budden Network',
       image: 'https://example.com/cover.jpg',
+      feedUrl: 'https://example.com/feed.xml',
       description: '',
       episodes: [
         {
@@ -71,5 +73,34 @@ describe('mapPodcastLookup', () => {
         },
       ],
     });
+  });
+});
+
+describe('parsePodcastFeedDescription', () => {
+  it('reads itunes:summary from the channel when present', () => {
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+      <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+        <channel>
+          <title>Switched on Pop</title>
+          <description>Fallback description</description>
+          <itunes:summary>A podcast about the making and meaning of pop music.</itunes:summary>
+        </channel>
+      </rss>`;
+
+    expect(parsePodcastFeedDescription(xml)).toBe(
+      'A podcast about the making and meaning of pop music.',
+    );
+  });
+
+  it('falls back to channel description and strips HTML', () => {
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+      <rss version="2.0">
+        <channel>
+          <title>Test</title>
+          <description><![CDATA[<p>Hello <strong>world</strong></p>]]></description>
+        </channel>
+      </rss>`;
+
+    expect(parsePodcastFeedDescription(xml)).toBe('Hello world');
   });
 });

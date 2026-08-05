@@ -29,6 +29,7 @@ type ItunesLookupPodcast = {
   artistName: string;
   artworkUrl600?: string;
   artworkUrl100?: string;
+  feedUrl?: string;
 };
 
 type ItunesLookupEpisode = {
@@ -46,7 +47,6 @@ type ItunesLookupResponse = {
   results: Array<ItunesLookupPodcast | ItunesLookupEpisode>;
 };
 
-// Pasamos del JSON raro de iTunes a nuestro modelo limpio (id, title, author, image)
 function mapTopPodcastEntry(entry: ItunesTopPodcast): Podcast {
   const images = entry['im:image'] ?? [];
 
@@ -70,7 +70,6 @@ function isEpisodeResult(
   return result.kind === 'podcast-episode';
 }
 
-// Del episodio de iTunes a nuestro modelo limpio
 function mapEpisode(result: ItunesLookupEpisode): Episode {
   return {
     id: String(result.trackId),
@@ -86,8 +85,6 @@ export function mapTopPodcasts(response: ItunesTopPodcastsResponse): Podcast[] {
   return response.feed.entry.map(mapTopPodcastEntry);
 }
 
-// El lookup mezcla el podcast y los episodios en results; aquí los separamos
-// La descripción del podcast no viene en esta API (hay que ir al RSS)
 export function mapPodcastLookup(response: ItunesLookupResponse): PodcastDetail {
   const podcastResult = response.results.find(isPodcastResult);
 
@@ -100,9 +97,31 @@ export function mapPodcastLookup(response: ItunesLookupResponse): PodcastDetail 
     title: podcastResult.collectionName,
     author: podcastResult.artistName,
     image: podcastResult.artworkUrl600 ?? podcastResult.artworkUrl100 ?? '',
+    feedUrl: podcastResult.feedUrl ?? '',
     description: '',
     episodes: response.results.filter(isEpisodeResult).map(mapEpisode),
   };
+}
+
+// Sacamos la descripción del canal RSS
+export function parsePodcastFeedDescription(xml: string): string {
+  const document = new DOMParser().parseFromString(xml.trim(), 'text/xml');
+  const channel = document.querySelector('channel');
+
+  if (!channel) {
+    return '';
+  }
+
+  const itunesSummary = channel.getElementsByTagNameNS(
+    'http://www.itunes.com/dtds/podcast-1.0.dtd',
+    'summary',
+  )[0]?.textContent;
+
+  const rawDescription = itunesSummary ?? channel.querySelector('description')?.textContent ?? '';
+
+  return (
+    new DOMParser().parseFromString(rawDescription, 'text/html').body.textContent?.trim() ?? ''
+  );
 }
 
 export const podcastsApi = createApi({
@@ -117,7 +136,15 @@ export const podcastsApi = createApi({
       query: podcastLookupUrl,
       transformResponse: mapPodcastLookup,
     }),
+    getPodcastDescription: build.query<string, string>({
+      query: (feedUrl) => ({
+        url: feedUrl,
+        responseHandler: 'text' as const,
+      }),
+      transformResponse: parsePodcastFeedDescription,
+    }),
   }),
 });
 
-export const { useGetTopPodcastsQuery, useGetPodcastByIdQuery } = podcastsApi;
+export const { useGetTopPodcastsQuery, useGetPodcastByIdQuery, useGetPodcastDescriptionQuery } =
+  podcastsApi;
