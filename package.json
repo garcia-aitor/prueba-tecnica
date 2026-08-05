@@ -6,7 +6,13 @@
   "author": "",
   "type": "commonjs",
   "main": "index.js",
+  "engines": {
+    "node": ">=22 <23"
+  },
   "scripts": {
+    "start": "node --import tsx ./node_modules/webpack-cli/bin/cli.js serve --config webpack.dev.ts",
+    "build": "node --import tsx ./node_modules/webpack-cli/bin/cli.js --config webpack.prod.ts",
+    "serve": "serve -s dist -l 3000",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -24,6 +30,7 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.3",
     "@types/jest": "^30.0.0",
+    "@types/node": "^22.15.30",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@types/styled-components": "^5.1.36",
@@ -37,9 +44,11 @@
     "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "prettier": "^3.9.6",
+    "serve": "^14.2.6",
     "style-loader": "^4.0.0",
     "ts-jest": "^29.4.12",
     "ts-loader": "^9.6.2",
+    "tsx": "^4.23.8",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.66.0",
     "webpack": "^5.109.2",
