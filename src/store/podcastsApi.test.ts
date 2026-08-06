@@ -1,4 +1,12 @@
-import { mapPodcastLookup, mapTopPodcasts, parsePodcastFeed } from './podcastsApi';
+import { mapPodcastLookup, mapTopPodcasts, parsePodcastFeed, proxiedUrl } from './podcastsApi';
+
+describe('proxiedUrl', () => {
+  it('routes external urls through the local /proxy endpoint', () => {
+    expect(proxiedUrl('https://itunes.apple.com/lookup?id=1')).toBe(
+      `/proxy?url=${encodeURIComponent('https://itunes.apple.com/lookup?id=1')}`,
+    );
+  });
+});
 
 describe('mapTopPodcasts', () => {
   it('maps the top podcasts feed into podcasts', () => {

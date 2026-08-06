@@ -8,6 +8,11 @@ function podcastLookupUrl(podcastId: string) {
   return `https://itunes.apple.com/lookup?id=${podcastId}&media=podcast&entity=podcastEpisode&limit=20`;
 }
 
+// Mismo origen: el browser pide /proxy y Node habla con iTunes / el RSS (sin CORS).
+export function proxiedUrl(url: string): string {
+  return `/proxy?url=${encodeURIComponent(url)}`;
+}
+
 type Label = { label: string };
 
 type ItunesTopPodcast = {
@@ -160,16 +165,16 @@ export const podcastsApi = createApi({
   baseQuery: baseQueryWithCache,
   endpoints: (build) => ({
     getTopPodcasts: build.query<Podcast[], void>({
-      query: () => TOP_PODCASTS_URL,
+      query: () => proxiedUrl(TOP_PODCASTS_URL),
       transformResponse: mapTopPodcasts,
     }),
     getPodcastById: build.query<PodcastDetail, string>({
-      query: podcastLookupUrl,
+      query: (podcastId) => proxiedUrl(podcastLookupUrl(podcastId)),
       transformResponse: mapPodcastLookup,
     }),
     getPodcastFeed: build.query<PodcastFeed, string>({
       query: (feedUrl) => ({
-        url: feedUrl,
+        url: proxiedUrl(feedUrl),
         responseHandler: 'text' as const,
       }),
       transformResponse: parsePodcastFeed,

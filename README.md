@@ -35,7 +35,7 @@ npm install
 | --- | --- |
 | `npm start` | Dev server en [http://localhost:3000](http://localhost:3000) |
 | `npm run build` | Bundle de producción en `dist/` |
-| `npm run serve` | Sirve el `dist/` en el puerto 3000 |
+| `npm run serve` | Sirve el `dist/` en el puerto 3000 (incluye `/proxy` anti-CORS) |
 | `npm run lint` / `npm run lint:fix` | ESLint (y autofix) |
 | `npm run format` / `npm run format:check` | Prettier |
 | `npm test` | Tests unitarios (Jest) |
@@ -58,13 +58,7 @@ npx playwright install chromium
 - **Caché 24h:** un `baseQuery` custom de RTK Query guarda en `localStorage` (clave = URL). Si la entrada tiene menos de un día, no se vuelve a pedir a la red.
 - **Descripción / HTML:** iTunes lookup casi no trae HTML útil en los episodios. La descripción del canal y el HTML de cada episodio salen del RSS (`feedUrl`).
 - **Loading del header:** el spinner usa `useNavigation` de React Router. Las rutas de detalle tienen loaders que disparan las queries de RTK para que el indicador se vea al navegar.
-- **iTunes en directo:** el top 100 y el lookup ya mandan CORS, así que no paso por proxy para esas llamadas.
-
-### Nota sobre la descripción del podcast
-
-La descripción del canal (y el HTML rico de los episodios) sale del RSS del podcast, no del lookup de iTunes. En desarrollo suele ir bien porque muchos feeds permiten CORS desde el navegador.
-
-En producción, al servir el `dist` en estático, algunos feeds bloquean la petición por CORS. El enunciado sugiere pasar por allorigins, pero ese proxy (y otras alternativas públicas que probé) me devolvía errores 500/522 de forma intermitente, así que preferí no depender de un tercero inestable solo para ese dato. Si el feed falla, la app sigue mostrando el detalle y los episodios; solo puede faltar la descripción.
+- **Proxy `/proxy` (CORS):** el enunciado apunta a allorigins, pero ese servicio (y otros públicos) fallaban con 500/522. En su lugar, top 100, lookup y RSS van a `/proxy?url=…` en el mismo origen: en dev lo monta webpack-dev-server y en prod el script de `npm run serve`. Node pide el recurso sin CORS; el navegador solo habla con localhost.
 
 ## Estructura
 
