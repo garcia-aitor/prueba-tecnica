@@ -80,3 +80,4 @@ src/
 - `v0.2-home` — homepage con la vista de listado, búsqueda y caché
 - `v0.3-podcast-detail` — vista de podcast
 - `v0.4-episode-detail` — vista de episodio + player
+- `v1.0` — aplicación lista (vistas, caché, proxy CORS, E2E, README)
