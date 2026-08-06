@@ -57,7 +57,11 @@ npx playwright install chromium
 
 - **Caché 24h:** un `baseQuery` custom de RTK Query guarda en `localStorage` (clave = URL). Si la entrada tiene menos de un día, no se vuelve a pedir a la red.
 - **Descripción / HTML:** iTunes lookup casi no trae HTML útil en los episodios. La descripción del canal y el HTML de cada episodio salen del RSS (`feedUrl`). Antes de pintar el HTML del episodio lo pasamos por DOMPurify (así evitamos XSS del feed).
-- **Loading del header:** el spinner usa `useNavigation` de React Router. Las rutas de detalle tienen loaders que disparan las queries de RTK para que el indicador se vea al navegar.
+- **Loading del header / loaders:** el spinner usa `useNavigation` de React Router. Mientras la navegación no está `idle`, se muestra arriba a la derecha.
+
+  Las rutas de detalle (`/podcast/:id` y episodio) tienen **loaders** que, antes de pintar la vista, disparan las queries de RTK Query (`initiate` + `unwrap`). Así el spinner cubre de verdad la espera de red, no solo el cambio de ruta.
+
+  En **podcast detail** el loader hace dos pasos: primero el lookup de iTunes (episodios, `feedUrl`, etc.) y, si hay `feedUrl`, el RSS para la **descripción del canal**. La página también espera ese feed (`isWaitingForFeed`) antes de mostrar el sidebar con la descripción, para no enseñar el detalle a medias. Si el RSS falla, se loguea en consola y la vista sigue (sin descripción). El home no lleva loader a propósito: la carga inicial del top 100 no es una “navegación” entre rutas.
 - **Proxy `/proxy` (CORS):** el enunciado apunta a allorigins, pero ese servicio (y otros públicos) fallaban con 500/522. Top 100, lookup y RSS van a `/proxy?url=…` en el mismo origen en **dev y prod**: webpack-dev-server y `npm run serve`. Node pide el recurso sin CORS; el navegador solo habla con localhost.
 
   > **No desplegar este `/proxy` tal cual en internet.** Acepta cualquier URL `http(s)` y el servidor la pide por ti: es un proxy abierto (riesgo SSRF hacia localhost/red interna). Vale para demo local (`npm start` / `npm run serve`). Una allowlist estricta es incómoda porque los RSS salen de decenas de dominios distintos; en un deploy real habría que acotar destinos (p. ej. bloquear redes privadas) o un proxy más controlado.
