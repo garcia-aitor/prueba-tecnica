@@ -8,7 +8,7 @@ function podcastLookupUrl(podcastId: string) {
   return `https://itunes.apple.com/lookup?id=${podcastId}&media=podcast&entity=podcastEpisode&limit=20`;
 }
 
-// Mismo origen: el browser pide /proxy y Node habla con iTunes / el RSS (sin CORS).
+// Mismo origen en dev y prod: el browser pide /proxy y Node habla con iTunes / el RSS.
 export function proxiedUrl(url: string): string {
   return `/proxy?url=${encodeURIComponent(url)}`;
 }
