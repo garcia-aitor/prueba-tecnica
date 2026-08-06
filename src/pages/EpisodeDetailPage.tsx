@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import type { LoaderFunctionArgs } from 'react-router-dom';
 import styled from 'styled-components';
 import { PodcastSidebar } from '../components/PodcastSidebar';
+import { sanitizeEpisodeHtml } from '../hooks/sanitizeEpisodeHtml';
 import { podcastsApi, useGetPodcastByIdQuery, useGetPodcastFeedQuery } from '../store/podcastsApi';
 import { store } from '../store/store';
 
@@ -148,7 +149,9 @@ export function EpisodeDetailPage() {
     return <p>Episodio no encontrado</p>;
   }
 
-  const episodeDescription = feed?.episodeDescriptions[episode.title] || episode.description;
+  const episodeDescription = sanitizeEpisodeHtml(
+    feed?.episodeDescriptions[episode.title] || episode.description,
+  );
 
   return (
     <Layout>

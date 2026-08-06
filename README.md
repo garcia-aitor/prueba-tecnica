@@ -56,9 +56,11 @@ npx playwright install chromium
 ## Decisiones técnicas
 
 - **Caché 24h:** un `baseQuery` custom de RTK Query guarda en `localStorage` (clave = URL). Si la entrada tiene menos de un día, no se vuelve a pedir a la red.
-- **Descripción / HTML:** iTunes lookup casi no trae HTML útil en los episodios. La descripción del canal y el HTML de cada episodio salen del RSS (`feedUrl`).
+- **Descripción / HTML:** iTunes lookup casi no trae HTML útil en los episodios. La descripción del canal y el HTML de cada episodio salen del RSS (`feedUrl`). Antes de pintar el HTML del episodio lo pasamos por DOMPurify (así evitamos XSS del feed).
 - **Loading del header:** el spinner usa `useNavigation` de React Router. Las rutas de detalle tienen loaders que disparan las queries de RTK para que el indicador se vea al navegar.
 - **Proxy `/proxy` (CORS):** el enunciado apunta a allorigins, pero ese servicio (y otros públicos) fallaban con 500/522. En su lugar, top 100, lookup y RSS van a `/proxy?url=…` en el mismo origen: en dev lo monta webpack-dev-server y en prod el script de `npm run serve`. Node pide el recurso sin CORS; el navegador solo habla con localhost.
+
+  > **No desplegar este `/proxy` tal cual en internet.** Acepta cualquier URL `http(s)` y el servidor la pide por ti: es un proxy abierto (riesgo SSRF hacia localhost/red interna). Vale para demo local (`npm start` / `npm run serve`). Una allowlist estricta es incómoda porque los RSS salen de decenas de dominios distintos; en un deploy real habría que acotar destinos (p. ej. bloquear redes privadas) o un proxy más controlado.
 
 ## Estructura
 
