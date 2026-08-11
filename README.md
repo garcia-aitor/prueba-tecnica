@@ -1,6 +1,6 @@
 # Prueba técnica
 
-Documentación del desarrollo (diseño, decisiones y kanban): [Notion — Test técnico](https://app.notion.com/p/Test-t-cnico-Aitor-Garc-a-Bellver-3b3f79cb7e268011b8cce13df9df4939?source=copy_link).
+[Documentación del desarrollo (diseño, decisiones y kanban):](https://app.notion.com/p/Test-t-cnico-Aitor-Garc-a-Bellver-3b3f79cb7e268011b8cce13df9df4939?source=copy_link).
 
 SPA para explorar los 100 podcasts musicales más populares de Apple Podcasts: listado con búsqueda, detalle del podcast, detalle del episodio y reproducción con el player nativo HTML5. La navegación es en cliente y los datos se cachean 24 horas en `localStorage`.
 
